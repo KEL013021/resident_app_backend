@@ -52,19 +52,14 @@ const ChangePasswordScreen = ({ navigation }) => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 20}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
       <ScrollView
         contentContainerStyle={[styles.scrollContent, { backgroundColor: colors.background }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color={colors.icon} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>Change Password</Text>
-        </View>
+       
 
         <Image
           source={require('./assets/password-lock.png')}
@@ -144,8 +139,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     padding: 20,
-    paddingTop: 50,
-    paddingBottom: 10,
+    paddingTop: 0,         // itinaas ng konti ang content
+    paddingBottom: 100,     // sapat para hindi matabunan ng keyboard
   },
   header: {
     flexDirection: 'row',
@@ -176,7 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   form: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   label: {
     fontSize: 14,
@@ -186,15 +181,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    height: 50,
-    marginBottom: 20,
+    height: 45,
+    marginBottom: 15,
   },
   saveButton: {
     backgroundColor: '#00C851',
     paddingVertical: 15,
     borderRadius: 6,
     alignItems: 'center',
-    marginBottom: 80,
+    marginBottom: 20,
   },
   saveButtonText: {
     color: 'white',

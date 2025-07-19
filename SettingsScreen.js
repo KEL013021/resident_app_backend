@@ -42,12 +42,6 @@ const SettingsScreen = ({ navigation }) => {
           <Text style={[styles.itemText, { color: colors.text }]}>Edit Profile</Text>
         </TouchableOpacity>
 
-        {/* Languages */}
-        <TouchableOpacity style={[styles.item, { backgroundColor: colors.card }]}>
-          <Ionicons name="globe-outline" size={20} color={colors.icon} style={styles.icon} />
-          <Text style={[styles.itemText, { color: colors.text }]}>Languages</Text>
-        </TouchableOpacity>
-
         {/* About */}
         <TouchableOpacity
           style={[styles.item, { backgroundColor: colors.card }]}

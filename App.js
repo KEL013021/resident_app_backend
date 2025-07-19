@@ -27,12 +27,12 @@ import AboutScreen from './AboutScreen';
 import ChangePasswordScreen from './ChangePasswordScreen';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
+import ForgotPasswordScreen from './ForgotPasswordScreen';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-// Animated tab icon
 function AnimatedIcon({ name, color, focused }) {
   const scale = useSharedValue(focused ? 1.25 : 1);
   React.useEffect(() => {
@@ -48,9 +48,22 @@ function AnimatedIcon({ name, color, focused }) {
   );
 }
 
-// Custom bottom tab bar
 function CustomTabBar({ state, navigation, descriptors }) {
   const { colors } = useTheme();
+
+  const getActiveRouteName = (route) => {
+    if (!route.state || !route.state.routes) return route.name;
+    const nestedRoute = route.state.routes[route.state.index];
+    return getActiveRouteName(nestedRoute);
+  };
+
+  const currentRoute = state.routes[state.index];
+  const activeRouteName = getActiveRouteName(currentRoute);
+
+  if (["EditProfile", "ChangePassword", "About"].includes(activeRouteName)) {
+    return null;
+  }
+
   return (
     <>
       <View style={[styles.tabContainer, { backgroundColor: colors.header }]}>
@@ -58,16 +71,39 @@ function CustomTabBar({ state, navigation, descriptors }) {
           const focused = state.index === i;
           const onPress = () => navigation.navigate(route.name);
           const color = focused ? '#2CD261' : '#ccc';
+
           let icon = 'circle';
-          if (route.name === 'Emergency') icon = 'medkit';
-          else if (route.name === 'Evacuation') icon = 'business';
-          else if (route.name === 'Home') icon = 'home';
-          else if (route.name === 'Documents') icon = 'document-text';
-          else if (route.name === 'Profile') icon = 'person';
+          let label = '';
+
+          switch (route.name) {
+            case 'Emergency':
+              icon = 'medkit';
+              label = 'Emergency';
+              break;
+            case 'Evacuation':
+              icon = 'business';
+              label = 'Evacuation';
+              break;
+            case 'Home':
+              icon = 'home';
+              label = 'Home';
+              break;
+            case 'Documents':
+              icon = 'document-text';
+              label = 'Documents';
+              break;
+            case 'Profile':
+              icon = 'person';
+              label = 'Profile';
+              break;
+            default:
+              label = '';
+          }
+
           return (
             <TouchableOpacity key={route.key} onPress={onPress} style={styles.tabButton}>
               <AnimatedIcon name={icon} focused={focused} color={color} />
-              <Text style={{ color, fontSize: 10 }}>{route.name}</Text>
+              <Text style={{ color, fontSize: 10 }}>{label}</Text>
             </TouchableOpacity>
           );
         })}
@@ -77,20 +113,18 @@ function CustomTabBar({ state, navigation, descriptors }) {
   );
 }
 
-// Profile stack for nested navigation
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProfileHome" component={ProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: true }} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ headerShown: true }} />
-      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} options={{ headerShown: true }} />
+      <Stack.Screen name="About" component={AboutScreen} options={{ headerShown: true }} />
     </Stack.Navigator>
   );
 }
 
-// Tab navigator
 function TabRoutes() {
   return (
     <Tab.Navigator
@@ -107,7 +141,6 @@ function TabRoutes() {
   );
 }
 
-// Main stack nested inside drawer
 function MainStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -117,14 +150,13 @@ function MainStack() {
   );
 }
 
-// Drawer navigator
 function AppDrawer() {
   const { colors } = useTheme();
   return (
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
-        drawerStyle: { backgroundColor: colors.header },
+        drawerStyle: { backgroundColor: colors.header, width: 220 },
         drawerActiveTintColor: '#2CD261',
         drawerInactiveTintColor: colors.text,
         drawerLabelStyle: { fontSize: 14 },
@@ -135,14 +167,15 @@ function AppDrawer() {
         component={MainStack}
         options={{
           drawerLabel: 'Home',
-          drawerIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
         }}
       />
     </Drawer.Navigator>
   );
 }
 
-// Auth stack for login/signup
 function AuthStack({ setIsLoggedIn }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -150,11 +183,11 @@ function AuthStack({ setIsLoggedIn }) {
         {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
       </Stack.Screen>
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
     </Stack.Navigator>
   );
 }
 
-// Root App
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -163,7 +196,11 @@ export default function App() {
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
           <NavigationContainer>
-            {isLoggedIn ? <AppDrawer /> : <AuthStack setIsLoggedIn={setIsLoggedIn} />}
+            {isLoggedIn ? (
+              <AppDrawer />
+            ) : (
+              <AuthStack setIsLoggedIn={setIsLoggedIn} />
+            )}
           </NavigationContainer>
         </SafeAreaView>
       </SafeAreaProvider>

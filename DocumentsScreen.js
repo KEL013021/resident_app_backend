@@ -14,13 +14,12 @@ export default function DocumentsScreen() {
   const [visible, setVisible] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [documentType, setDocumentType] = useState('');
-  const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
   const [purpose, setPurpose] = useState('');
   const [requests, setRequests] = useState([]);
 
   const handleSubmit = () => {
-    if (!fullName || !address || !purpose || !documentType) {
+    if (!address || !purpose || !documentType) {
       alert('Please complete all fields.');
       return;
     }
@@ -31,12 +30,11 @@ export default function DocumentsScreen() {
         id: Date.now().toString(),
         type: documentType,
         status: 'Pending',
-        name: fullName,
+        
       },
     ]);
 
     setDocumentType('');
-    setFullName('');
     setAddress('');
     setPurpose('');
     setShowForm(false);
@@ -129,7 +127,7 @@ export default function DocumentsScreen() {
       marginBottom: 15,
     },
     form: {
-      marginBottom: 20,
+      marginBottom: 10,
     },
     formContent: {
       paddingBottom: 100,
@@ -255,14 +253,7 @@ export default function DocumentsScreen() {
             </Picker>
           </View>
 
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            style={styles.input}
-            value={fullName}
-            onChangeText={setFullName}
-            placeholder="Enter your full name"
-            placeholderTextColor={isDark ? '#ccc' : '#888'}
-          />
+          
 
           <Text style={styles.label}>Address</Text>
           <TextInput
@@ -275,7 +266,7 @@ export default function DocumentsScreen() {
 
           <Text style={styles.label}>Purpose</Text>
           <TextInput
-            style={[styles.input, { height: 80 }]}
+            style={[styles.input, { height: 50 }]}
             value={purpose}
             onChangeText={setPurpose}
             placeholder="Enter purpose"

@@ -28,7 +28,6 @@ export default function ProfileScreen({ navigation }) {
           text: 'Log Out',
           style: 'destructive',
           onPress: () => {
-            // Add your actual logout logic here
             Alert.alert('Logged out', 'You have successfully logged out.');
           },
         },
@@ -62,13 +61,15 @@ export default function ProfileScreen({ navigation }) {
             <Entypo name="moon" size={20} color={colors.icon} style={styles.icon} />
             <Text style={[styles.label, { color: colors.text }]}>Dark Mode</Text>
           </View>
-          <Switch
-            trackColor={{ false: '#ccc', true: '#0A3E8C' }}
-            thumbColor={isDark ? '#fff' : '#eee'}
-            ios_backgroundColor="#3e3e3e"
-            value={isDark}
-            onValueChange={toggleTheme}
-          />
+          <View style={styles.switchWrapper}>
+            <Switch
+              trackColor={{ false: '#ccc', true: '#0A3E8C' }}
+              thumbColor={isDark ? '#fff' : '#eee'}
+              ios_backgroundColor="#3e3e3e"
+              value={isDark}
+              onValueChange={toggleTheme}
+            />
+          </View>
         </View>
 
         {/* Profile Details */}
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
+    height: 70, 
     borderBottomColor: '#DCE3E8',
     borderBottomWidth: 1,
   },
@@ -143,5 +144,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
+  },
+  switchWrapper: {
+    paddingRight: 4,
+    paddingVertical: 0, 
   },
 });

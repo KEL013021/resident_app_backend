@@ -9,13 +9,16 @@ import {
   Platform,
   KeyboardAvoidingView,
   Alert,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from './ThemeContext';
+import * as ImagePicker from 'expo-image-picker';
 
 const EditProfileScreen = ({ navigation }) => {
   const { colors } = useTheme();
 
+  const [avatar, setAvatar] = useState(null);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -25,19 +28,13 @@ const EditProfileScreen = ({ navigation }) => {
   const [household, setHousehold] = useState('');
   const [sitio, setSitio] = useState('');
 
-  // Set header style and hide tab bar
   useLayoutEffect(() => {
-    const parent = navigation.getParent(); // this gets the tab navigator
-
+    const parent = navigation.getParent();
     navigation.setOptions({
       title: 'Edit Profile',
-      headerStyle: {
-        backgroundColor: '#6D84B4',
-      },
+      headerStyle: { backgroundColor: '#6D84B4' },
       headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
+      headerTitleStyle: { fontWeight: 'bold' },
     });
 
     if (parent) {
@@ -51,6 +48,24 @@ const EditProfileScreen = ({ navigation }) => {
     };
   }, [navigation]);
 
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Permission to access media library is required!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      allowsEditing: true,
+    });
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
+  };
+
   const handleSave = () => {
     Alert.alert('Success', 'Profile saved successfully.');
     navigation.goBack();
@@ -63,8 +78,12 @@ const EditProfileScreen = ({ navigation }) => {
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.avatarContainer}>
-          <Ionicons name="person-circle-outline" size={100} color="#000" />
-          <TouchableOpacity style={styles.editIcon}>
+          {avatar ? (
+            <Image source={{ uri: avatar }} style={styles.avatarImage} />
+          ) : (
+            <Ionicons name="person-circle-outline" size={100} color="#000" />
+          )}
+          <TouchableOpacity style={styles.editIcon} onPress={pickImage}>
             <Ionicons name="pencil" size={16} color="#000" />
           </TouchableOpacity>
         </View>
@@ -135,6 +154,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     position: 'relative',
   },
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
   editIcon: {
     position: 'absolute',
     right: 0,
@@ -145,7 +169,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   formContainer: {
-    backgroundColor: '#1C3A7E',
+    backgroundColor: '#5d76b0ff',
     width: '90%',
     borderRadius: 30,
     padding: 20,
@@ -171,7 +195,7 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   saveButton: {
-    backgroundColor: '#2CD261',
+    backgroundColor: '#3aba63ff',
     padding: 15,
     borderRadius: 20,
     marginTop: 20,
