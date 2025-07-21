@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   View,
@@ -9,6 +8,9 @@ import {
   Image,
   SafeAreaView,
   Modal,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 export default function ForgotPasswordScreen({ navigation }) {
@@ -34,52 +36,59 @@ export default function ForgotPasswordScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <Text style={styles.title}>Forgot Your Password</Text>
 
-      <Text style={styles.title}>Forgot Your Password</Text>
+            <View style={styles.iconWrapper}>
+              <Image
+                source={require('./assets/forgotpassword.png')}
+                style={styles.iconImage}
+              />
+            </View>
 
-      <View style={styles.iconWrapper}>
-        <Image
-          source={require('./assets/forgotpassword.png')}
-          style={styles.iconImage}
-        />
-      </View>
+            <Text style={styles.subtext}>
+              Enter your registered email below to receive password reset instructions.
+            </Text>
 
-      <Text style={styles.subtext}>
-        Enter your registered email below to receive password reset instructions.
-      </Text>
+            <View style={{ width: '100%' }}>
+              <TextInput
+                style={[
+                  styles.input,
+                  isEmailInvalid && { borderColor: '#D9534F' }
+                ]}
+                placeholder="Enter your Gmail address"
+                placeholderTextColor="#999"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
 
-      <View style={{ width: '100%' }}>
-        <TextInput
-          style={[
-            styles.input,
-            isEmailInvalid && { borderColor: '#D9534F' }
-          ]}
-          placeholder="Enter your Gmail address"
-          placeholderTextColor="#999"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
+              {isEmailInvalid && (
+                <Text style={styles.inlineErrorBelow}>✖ Invalid Gmail address</Text>
+              )}
+            </View>
 
-        {/* Reserve space whether error is shown or not */}
-        <View style={{ minHeight: 20, alignItems: 'flex-end', justifyContent: 'center' }}>
-          {isEmailInvalid && (
-            <Text style={styles.inlineErrorBelow}>✖ Invalid Gmail address</Text>
-          )}
-        </View>
-      </View>
+            <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+              <Text style={styles.sendText}>Send</Text>
+            </TouchableOpacity>
 
-      <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-        <Text style={styles.sendText}>Send</Text>
-      </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={styles.backLogin}>Back to Login</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.backLogin}>Back to Login</Text>
-      </TouchableOpacity>
-
-      {/* Modal Alert */}
       <Modal transparent animationType="fade" visible={modalVisible}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
@@ -100,24 +109,31 @@ export default function ForgotPasswordScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: '100%',
+    alignItems: 'center',
   },
   title: {
     fontSize: 26,
     fontWeight: '600',
     marginBottom: 25,
-     marginTop: 35, // ← this adds space above the title
     color: '#333',
   },
   iconWrapper: {
     width: 150,
     height: 150,
     borderRadius: 60,
-    backgroundColor: '#ffffffff',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 50,
@@ -157,7 +173,8 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
+    marginTop: 10,
   },
   sendText: {
     color: '#fff',
@@ -167,7 +184,7 @@ const styles = StyleSheet.create({
   backLogin: {
     fontSize: 14,
     color: '#6A5ACD',
-    marginTop: 10,
+    marginTop: 20,
   },
   modalOverlay: {
     flex: 1,

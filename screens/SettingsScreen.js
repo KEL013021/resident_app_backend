@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -7,24 +7,34 @@ import {
   ScrollView,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useTheme } from './ThemeContext'; // import theme
+import { useTheme } from './ThemeContext';
 
 const SettingsScreen = ({ navigation }) => {
-  const { colors } = useTheme(); // get theme colors
+  const { colors, isDark } = useTheme();
+
+  // Set header background color and text color
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Settings',
+      headerStyle: {
+        backgroundColor: '#6D84B4', // Kulay ng header
+      },
+      headerTintColor: '#fff', // Kulay ng arrow
+      headerTitleStyle: {
+        fontWeight: 'bold',
+        color: '#fff', // Kulay ng "Settings"
+      },
+    });
+  }, [navigation]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.header }]}>
-      <View style={[styles.header, { backgroundColor: colors.header }]}>
-        {/* Optional title */}
-      </View>
-
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { backgroundColor: colors.background },
+          { backgroundColor: colors.background, paddingBottom: 40 }, // dagdag na padding sa baba
         ]}
       >
-        {/* Change Password */}
         <TouchableOpacity
           style={[styles.item, { backgroundColor: colors.card }]}
           onPress={() => navigation.navigate('ChangePassword')}
@@ -33,7 +43,6 @@ const SettingsScreen = ({ navigation }) => {
           <Text style={[styles.itemText, { color: colors.text }]}>Change Password</Text>
         </TouchableOpacity>
 
-        {/* Edit Profile */}
         <TouchableOpacity
           style={[styles.item, { backgroundColor: colors.card }]}
           onPress={() => navigation.navigate('EditProfile')}
@@ -42,7 +51,6 @@ const SettingsScreen = ({ navigation }) => {
           <Text style={[styles.itemText, { color: colors.text }]}>Edit Profile</Text>
         </TouchableOpacity>
 
-        {/* About */}
         <TouchableOpacity
           style={[styles.item, { backgroundColor: colors.card }]}
           onPress={() => navigation.navigate('About')}
@@ -66,17 +74,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 20,
-  },
   content: {
-    paddingVertical: 10,
+    paddingVertical: 40,
     paddingHorizontal: 15,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     flexGrow: 1,
+    paddingBottom: 40, // added padding to avoid buttons touching tab bar
   },
   item: {
     flexDirection: 'row',

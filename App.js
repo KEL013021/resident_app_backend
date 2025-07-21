@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// App.js
+import React, { createContext, useState } from 'react';
 import {
   View,
   Text,
@@ -12,22 +13,25 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeProvider, useTheme } from './ThemeContext';
+import { ThemeProvider, useTheme } from './screens/ThemeContext';
+
+// 👇 Export the context
+export const AuthContext = createContext();
 
 // Screens
-import HomeScreen from './HomeScreen';
-import EvacuationCenterScreen from './EvacuationCenterScreen';
-import ProfileScreen from './ProfileScreen';
-import DocumentsScreen from './DocumentsScreen';
-import EmergencyScreen from './EmergencyScreen';
-import SettingsScreen from './SettingsScreen';
-import ProfileDetailsScreen from './ProfileDetailsScreen';
-import EditProfileScreen from './EditProfileScreen';
-import AboutScreen from './AboutScreen';
-import ChangePasswordScreen from './ChangePasswordScreen';
-import LoginScreen from './LoginScreen';
-import SignupScreen from './SignupScreen';
-import ForgotPasswordScreen from './ForgotPasswordScreen';
+import HomeScreen from './screens/HomeScreen';
+import EvacuationCenterScreen from './screens/EvacuationCenterScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import DocumentsScreen from './screens/DocumentsScreen';
+import EmergencyScreen from './screens/EmergencyScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import ProfileDetailsScreen from './screens/ProfileDetailsScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
+import AboutScreen from './screens/AboutScreen';
+import ChangePasswordScreen from './screens/ChangePasswordScreen';
+import LoginScreen from './screens/LoginScreen';
+import SignupScreen from './screens/SignupScreen';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -164,19 +168,20 @@ function AppDrawer() {
     >
       <Drawer.Screen
         name="Main"
-        component={MainStack}
         options={{
           drawerLabel: 'Home',
           drawerIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
+        component={MainStack}
       />
     </Drawer.Navigator>
   );
 }
 
-function AuthStack({ setIsLoggedIn }) {
+function AuthStack() {
+  const { setIsLoggedIn } = React.useContext(AuthContext);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login">
@@ -192,19 +197,17 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <ThemeProvider>
-      <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1 }}>
-          <NavigationContainer>
-            {isLoggedIn ? (
-              <AppDrawer />
-            ) : (
-              <AuthStack setIsLoggedIn={setIsLoggedIn} />
-            )}
-          </NavigationContainer>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    </ThemeProvider>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }}>
+            <NavigationContainer>
+              {isLoggedIn ? <AppDrawer /> : <AuthStack />}
+            </NavigationContainer>
+          </SafeAreaView>
+        </SafeAreaProvider>
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 

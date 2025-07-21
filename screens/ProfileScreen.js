@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Switch,
   TouchableOpacity,
   Alert,
+  Image,
 } from 'react-native';
 import {
   MaterialIcons,
@@ -14,9 +15,31 @@ import {
   Ionicons,
 } from '@expo/vector-icons';
 import { useTheme } from './ThemeContext';
+import { AuthContext } from '../App';
+
 
 export default function ProfileScreen({ navigation }) {
   const { isDark, toggleTheme, colors } = useTheme();
+  const { setIsLoggedIn } = useContext(AuthContext);
+  const [resident, setResident] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const mockData = {
+        first_name: 'Jon Mary',
+        middle_name: 'R.',
+        last_name: 'Rodriguez',
+        image_url: 'https://via.placeholder.com/100',
+      };
+      setResident(mockData);
+    };
+
+    fetchData();
+  }, []);
+
+  const fullName = resident
+    ? `${resident.first_name} ${resident.middle_name} ${resident.last_name}`
+    : 'Loading...';
 
   const handleLogout = () => {
     Alert.alert(
@@ -27,9 +50,7 @@ export default function ProfileScreen({ navigation }) {
         {
           text: 'Log Out',
           style: 'destructive',
-          onPress: () => {
-            Alert.alert('Logged out', 'You have successfully logged out.');
-          },
+          onPress: () => setIsLoggedIn(false),
         },
       ]
     );
@@ -37,17 +58,18 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.header }]}>
-        <View style={[styles.avatarCircle, { backgroundColor: colors.iconBackground }]}>
-          <FontAwesome name="user" size={60} color={colors.icon} />
-        </View>
-        <Text style={[styles.fullName, { color: colors.text }]}>FullName</Text>
+        {resident?.image_url ? (
+          <Image source={{ uri: resident.image_url }} style={styles.avatarCircle} />
+        ) : (
+          <View style={[styles.avatarCircle, { backgroundColor: colors.iconBackground }]}>
+            <FontAwesome name="user" size={60} color={colors.icon} />
+          </View>
+        )}
+        <Text style={[styles.fullName, { color: colors.text }]}>{fullName}</Text>
       </View>
 
-      {/* Options List */}
       <View style={styles.list}>
-        {/* Email */}
         <TouchableOpacity style={styles.item} onPress={() => Alert.alert('Email pressed')}>
           <View style={styles.rowLeft}>
             <MaterialIcons name="email" size={20} color={colors.icon} style={styles.icon} />
@@ -55,7 +77,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        {/* Dark Mode Toggle */}
         <View style={styles.item}>
           <View style={styles.rowLeft}>
             <Entypo name="moon" size={20} color={colors.icon} style={styles.icon} />
@@ -72,7 +93,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Profile Details */}
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('ProfileDetails')}>
           <View style={styles.rowLeft}>
             <FontAwesome name="user-circle-o" size={20} color={colors.icon} style={styles.icon} />
@@ -80,7 +100,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        {/* Settings */}
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Settings')}>
           <View style={styles.rowLeft}>
             <Ionicons name="settings" size={20} color={colors.icon} style={styles.icon} />
@@ -88,7 +107,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        {/* Log Out */}
         <TouchableOpacity style={styles.item} onPress={handleLogout}>
           <View style={styles.rowLeft}>
             <MaterialIcons name="logout" size={20} color={colors.icon} style={styles.icon} />
@@ -101,9 +119,7 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     paddingTop: 60,
     paddingBottom: 40,
@@ -115,8 +131,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    resizeMode: 'cover',
   },
   fullName: {
     marginTop: 10,
@@ -131,7 +146,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 70, 
+    height: 70,
     borderBottomColor: '#DCE3E8',
     borderBottomWidth: 1,
   },
@@ -147,6 +162,5 @@ const styles = StyleSheet.create({
   },
   switchWrapper: {
     paddingRight: 4,
-    paddingVertical: 0, 
   },
 });
