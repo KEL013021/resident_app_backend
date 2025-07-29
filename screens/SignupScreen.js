@@ -15,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from './ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import BASE_URL from './config';
 
 export default function SignupScreen({ navigation }) {
   const { colors } = useTheme();
@@ -71,7 +72,7 @@ export default function SignupScreen({ navigation }) {
     if (!valid) return;
 
     try {
-      const response = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/signup.php', {
+      const response = await fetch(`${BASE_URL}/RESIDENT_COPY1/database/signup.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

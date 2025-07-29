@@ -15,6 +15,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from './config';
+
 
 export default function LoginScreen({ navigation, setIsLoggedIn }) {
   const [email, setEmail] = useState('');
@@ -31,7 +33,7 @@ export default function LoginScreen({ navigation, setIsLoggedIn }) {
     }
 
     try {
-      const response = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/login.php', {
+      const response = await fetch(`${BASE_URL}/RESIDENT_COPY1/database/login.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gmail: email, password: password }),

@@ -17,6 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
 import { AuthContext } from '../App';
+import BASE_URL from './config';
 
 export default function ProfileScreen({ navigation }) {
   const { isDark, toggleTheme, colors } = useTheme();
@@ -32,7 +33,7 @@ export default function ProfileScreen({ navigation }) {
           return;
         }
 
-        const response = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/resident_get.php', {
+        const response = await fetch(`${BASE_URL}/RESIDENT_COPY1/database/resident_get.php`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -77,7 +78,10 @@ export default function ProfileScreen({ navigation }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.header }]}>
         {resident?.image_url ? (
-          <Image source={{ uri: resident.image_url }} style={styles.avatarCircle} />
+        <Image
+          source={{ uri: `${BASE_URL}/BRGY/BRGYGO/uploads/${resident.image_url}` }}
+          style={styles.avatarCircle}
+        />
         ) : (
           <View style={[styles.avatarCircle, { backgroundColor: colors.iconBackground }]}>
             <FontAwesome name="user" size={60} color={colors.icon} />

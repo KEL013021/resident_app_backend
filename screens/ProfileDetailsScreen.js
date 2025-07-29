@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from './config';
 
 const ProfileDetailsScreen = ({ navigation }) => {
   const { colors } = useTheme();
@@ -13,7 +14,7 @@ const ProfileDetailsScreen = ({ navigation }) => {
       try {
         const storedId = await AsyncStorage.getItem('user_id');
         if (storedId) {
-          const response = await fetch(`http://10.50.144.130/RESIDENT_COPY1/database/profiledetails.php?user_id=${storedId}`);
+          const response = await fetch(`${BASE_URL}/BRGY/RESIDENT_COPY1/database/profiledetails.php?user_id=${storedId}`);
           const data = await response.json();
 
           if (!data.error) {
@@ -137,7 +138,7 @@ const ProfileDetailsScreen = ({ navigation }) => {
         <View style={[styles.avatarContainer, { backgroundColor: colors.avatarBackground }]}>
           {profileData.image_url ? (
             <Image
-              source={{ uri: `http://10.50.144.130/../../BRGYGO/uploads/${profileData.image_url}` }}
+              source={{ uri: `${BASE_URL}/BRGY/BRGYGO/uploads/${profileData.image_url}` }}
               style={styles.avatarImage}
             />
           ) : (

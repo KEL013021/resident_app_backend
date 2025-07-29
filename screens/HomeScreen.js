@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,70 @@ import {
   Image,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from './ThemeContext';
+import BASE_URL from './config';
 
 export default function HomeScreen({ navigation }) {
   const { isDark } = useTheme();
 
-  const latestAnnouncement =
-    '   Barangay Clean-Up Drive this Saturday at 7:00 AM. Please bring cleaning tools and wear protective gear.';
-  const postedOn = 'Posted on: July 16, 2025 – 9:00 AM';
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  const fetchAnnouncements = () => {
+    fetch(`${BASE_URL}/BRGY/RESIDENT_COPY1/database/get_announcements.php`)
+      .then(response => response.text())
+      .then(text => {
+        console.log('⚠️ Raw response:', text);
+        try {
+          const data = JSON.parse(text);
+          setAnnouncements(data);
+
+          // Fetch dimensions for each image
+          data.forEach(item => {
+            if (item.image) {
+              Image.getSize(
+                item.image,
+                (width, height) => {
+                  const screenWidth = 340; // Adjust as needed
+                  const ratio = height / width;
+                  const calculatedHeight = screenWidth * ratio;
+                  setImageDimensions(prev => ({
+                    ...prev,
+                    [item.id]: calculatedHeight,
+                  }));
+                },
+                error => {
+                  console.log('Failed to get image size:', error);
+                }
+              );
+            }
+          });
+        } catch (error) {
+          console.error('❌ JSON parse error:', error);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('❌ Network error:', error);
+        setLoading(false);
+      });
+  };
+
+  // Run once initially
+  fetchAnnouncements();
+
+  // Then repeat every 10 seconds
+  const interval = setInterval(fetchAnnouncements, 10000);
+
+  // Cleanup the interval on unmount
+  return () => clearInterval(interval);
+}, []);
+
 
   const styles = StyleSheet.create({
     container: {
@@ -94,80 +148,78 @@ export default function HomeScreen({ navigation }) {
     postedOnText: {
       color: '#fff',
       fontSize: 12,
-      textAlign: 'right', // ➡️ Right aligned
+      textAlign: 'right',
+    },
+    announcementImage: {
+      width: '100%',
+      height: 480,
+      borderRadius: 8,
+      marginTop: 10,
     },
     leftHeader: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  },
-
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10, // spacing between menu and logo
-  },
-
-  logoImage: {
-    width: 50,
-    height: 45,
-    resizeMode: 'contain',
-  },
-
-  logoText: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginLeft: 5,
-  },
-  gText: {
-  color: 'yellow',
-},
-
-bText: {
-  color: '#fff',
-},
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    logoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: 10,
+    },
+    logoImage: {
+      width: 50,
+      height: 45,
+      resizeMode: 'contain',
+    },
+    logoText: {
+      color: '#fff',
+      fontSize: 32,
+      fontWeight: 'bold',
+      marginLeft: 5,
+    },
+    gText: {
+      color: 'yellow',
+    },
+    bText: {
+      color: '#fff',
+    },
   });
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-  <View style={styles.headerRow}>
-    {/* Menu + BRGYGO Branding (left side) */}
-    <View style={styles.leftHeader}>
-      <TouchableOpacity
-        style={styles.sidebarIcon}
-        onPress={() => navigation.openDrawer()}
-      >
-        <Ionicons name="menu" size={28} color="#fff" />
-      </TouchableOpacity>
+        <View style={styles.headerRow}>
+          <View style={styles.leftHeader}>
+            <TouchableOpacity
+              style={styles.sidebarIcon}
+              onPress={() => navigation.openDrawer()}
+            >
+              <Ionicons name="menu" size={28} color="#fff" />
+            </TouchableOpacity>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('./assets/logo1.png')}
+                style={styles.logoImage}
+              />
+              <Text style={styles.logoText}>
+                <Text style={styles.bText}>BRGY</Text>
+                <Text style={styles.gText}>GO</Text>
+              </Text>
+            </View>
+          </View>
 
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('./assets/logo1.png')} // replace with actual logo
-          style={styles.logoImage}
-        />
-        <Text style={styles.logoText}>
-          <Text style={styles.bText}>BRGY</Text>
-          <Text style={styles.gText}>GO</Text>
-        </Text>
+          <View style={styles.userInfo}>
+            <TouchableOpacity
+              style={styles.profileIcon}
+              onPress={() => navigation.navigate('Profile')}
+            >
+              <Ionicons name="person" size={20} color="rgba(102, 171, 241, 1)" />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    </View>
 
-    {/* Profile Icon (right side) */}
-    <View style={styles.userInfo}>
-      <TouchableOpacity
-        style={styles.profileIcon}
-        onPress={() => navigation.navigate('Profile')}
-      >
-        <Ionicons name="person" size={20} color="rgba(102, 171, 241, 1)" />
-      </TouchableOpacity>
-    </View>
-  </View>
-</View>
-
-
-      {/* Welcome Box */}
+      {/* Welcome Message */}
       <View style={styles.welcomeBox}>
         <Text style={styles.welcomeText}>
           WELCOME!{"\n"}BrgyGo will help you today!
@@ -178,12 +230,33 @@ bText: {
         />
       </View>
 
-      {/* Announcements Container */}
-      <View style={styles.announcementContainer}>
-        <Text style={styles.announcementHeader}>Barangay Announcement</Text>
-        <Text style={styles.announcementText}>{latestAnnouncement}</Text>
-        <Text style={styles.postedOnText}>{postedOn}</Text>
-      </View>
+      {/* Announcements */}
+      <ScrollView style={{ flex: 1 }}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#7A97C6" style={{ marginTop: 20 }} />
+        ) : announcements.length === 0 ? (
+          <Text style={{ textAlign: 'center', marginTop: 20, color: isDark ? '#fff' : '#000' }}>
+            No announcements available.
+          </Text>
+        ) : (
+          announcements.map(item => (
+            <View key={item.id} style={styles.announcementContainer}>
+              <Text style={styles.announcementHeader}>{item.title}</Text>
+              {item.image ? (
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.announcementImage}
+                  resizeMode="cover"
+                />
+              ) : null}
+              <Text style={styles.announcementText}>{item.content}</Text>
+              <Text style={styles.postedOnText}>
+                Posted on: {new Date(item.date_posted).toLocaleString()}
+              </Text>
+            </View>
+          ))
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }

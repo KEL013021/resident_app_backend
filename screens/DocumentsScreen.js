@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ChatScreen from './Chatscreen';
 import { useTheme } from './ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from './config';
 
 export default function DocumentsScreen({ navigation }) {
   const { isDark, colors } = useTheme();
@@ -38,7 +39,7 @@ export default function DocumentsScreen({ navigation }) {
 
   const fetchRequests = async (userId) => {
     try {
-      const res = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/get_request.php', {
+      const res = await fetch(`${BASE_URL}/RESIDENT_COPY1/database/get_request.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: userId }),
@@ -55,7 +56,7 @@ export default function DocumentsScreen({ navigation }) {
   };
 
   useEffect(() => {
-    fetch('http://10.50.144.130/RESIDENT_COPY1/database/get_services.php')
+    fetch(`${BASE_URL}/RESIDENT_COPY1/database/get_services.php`)
       .then(res => res.json())
       .then(data => setServices(data))
       .catch(err => console.error('Error fetching services:', err));
@@ -73,7 +74,7 @@ export default function DocumentsScreen({ navigation }) {
       purpose: purpose,
     };
 
-    fetch('http://10.50.144.130/RESIDENT_COPY1/database/submit_request.php', {
+    fetch(`${BASE_URL}/RESIDENT_COPY1/database/submit_request.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestData),
