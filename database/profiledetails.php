@@ -1,7 +1,9 @@
 <?php
 include('config.php'); // make sure your DB connection is working
-
-header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
 
 // Check if user_id is provided
 if (isset($_GET['user_id'])) {
