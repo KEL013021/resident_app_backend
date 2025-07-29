@@ -27,6 +27,7 @@ export default function SignupScreen({ navigation }) {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptedToA, setAcceptedToA] = useState(false);
 
   const handleEmailChange = (text) => setEmail(text);
   const handlePasswordChange = (text) => setPassword(text);
@@ -62,10 +63,15 @@ export default function SignupScreen({ navigation }) {
       valid = false;
     }
 
+    if (!acceptedToA) {
+      Alert.alert('Terms Required', 'Please accept the Terms of Agreement.');
+      return;
+    }
+
     if (!valid) return;
 
     try {
-      const response = await fetch('http://192.168.1.9/Resident/database/signup.php', {
+      const response = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/signup.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,6 +79,7 @@ export default function SignupScreen({ navigation }) {
         body: JSON.stringify({
           gmail: trimmedEmail,
           password: trimmedPassword,
+          toa: true,
         }),
       });
 
@@ -109,7 +116,6 @@ export default function SignupScreen({ navigation }) {
               Start a better experience by signing up your account!
             </Text>
 
-            {/* Email Field */}
             <View style={styles.inputGroup}>
               <TextInput
                 style={styles.input}
@@ -123,7 +129,6 @@ export default function SignupScreen({ navigation }) {
               {emailError ? <Text style={styles.warningText}>{emailError}</Text> : null}
             </View>
 
-            {/* Password Field */}
             <View style={styles.inputGroup}>
               <View style={styles.inputWrapper}>
                 <TextInput
@@ -144,7 +149,6 @@ export default function SignupScreen({ navigation }) {
               {passwordError ? <Text style={styles.warningText}>{passwordError}</Text> : null}
             </View>
 
-            {/* Confirm Password Field */}
             <View style={styles.inputGroup}>
               <View style={styles.inputWrapper}>
                 <TextInput
@@ -167,12 +171,24 @@ export default function SignupScreen({ navigation }) {
               ) : null}
             </View>
 
-            {/* Signup Button */}
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setAcceptedToA(!acceptedToA)}
+            >
+              <Ionicons
+                name={acceptedToA ? 'checkbox-outline' : 'square-outline'}
+                size={20}
+                color={acceptedToA ? '#607ECF' : '#999'}
+              />
+              <Text style={styles.checkboxLabel}>
+                I accept the <Text style={styles.link}>Terms of Agreement</Text>
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.button} onPress={handleSignup}>
               <Text style={styles.buttonText}>SIGN UP</Text>
             </TouchableOpacity>
 
-            {/* Link to Login */}
             <Text style={styles.bottomText}>
               Already have an Account?{' '}
               <Text style={styles.link} onPress={() => navigation.replace('Login')}>
@@ -189,9 +205,7 @@ export default function SignupScreen({ navigation }) {
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     alignItems: 'center',
@@ -225,26 +239,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 30,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  inputGroup: {
-    width: '100%',
-    marginBottom: 10,
-  },
-  inputWrapper: {
-    width: '100%',
-    position: 'relative',
-  },
+  title: { fontSize: 28, fontWeight: 'bold', color: '#000', marginBottom: 5 },
+  subtitle: { fontSize: 14, color: '#555', textAlign: 'center', marginBottom: 20 },
+  inputGroup: { width: '100%', marginBottom: 10 },
+  inputWrapper: { width: '100%', position: 'relative' },
   input: {
     width: '100%',
     backgroundColor: '#f2f2f2',
@@ -252,17 +250,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     color: '#000',
   },
-  eyeIcon: {
-    position: 'absolute',
-    right: 10,
-    top: 12,
-  },
+  eyeIcon: { position: 'absolute', right: 10, top: 12 },
   warningText: {
     width: '100%',
     color: 'red',
     fontSize: 12,
     marginTop: 5,
     textAlign: 'left',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginVertical: 10,
+  },
+  checkboxLabel: {
+    marginLeft: 8,
+    color: '#555',
+    flex: 1,
+    flexWrap: 'wrap',
   },
   button: {
     width: '100%',
@@ -273,17 +279,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 15,
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  bottomText: {
-    fontSize: 13,
-    color: '#000',
-    marginTop: 5,
-  },
-  link: {
-    color: '#355BCF',
-    fontWeight: 'bold',
-  },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  bottomText: { fontSize: 13, color: '#000', marginTop: 5 },
+  link: { color: '#355BCF', fontWeight: 'bold' },
 });

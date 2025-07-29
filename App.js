@@ -94,7 +94,7 @@ function CustomTabBar({ state, navigation, descriptors }) {
               break;
             case 'Documents':
               icon = 'document-text';
-              label = 'Documents';
+              label = 'Services';
               break;
             case 'Profile':
               icon = 'person';

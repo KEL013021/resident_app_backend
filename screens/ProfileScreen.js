@@ -14,9 +14,9 @@ import {
   FontAwesome,
   Ionicons,
 } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from './ThemeContext';
 import { AuthContext } from '../App';
-
 
 export default function ProfileScreen({ navigation }) {
   const { isDark, toggleTheme, colors } = useTheme();
@@ -25,13 +25,30 @@ export default function ProfileScreen({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const mockData = {
-        first_name: 'Jon Mary',
-        middle_name: 'R.',
-        last_name: 'Rodriguez',
-        image_url: 'https://via.placeholder.com/100',
-      };
-      setResident(mockData);
+      try {
+        const userId = await AsyncStorage.getItem('user_id');
+        if (!userId) {
+          console.warn('No user_id found in storage.');
+          return;
+        }
+
+        const response = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/resident_get.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        const result = await response.json();
+        if (result.success && result.data) {
+          setResident(result.data);
+        } else {
+          console.warn('Resident fetch failed:', result.message);
+        }
+      } catch (error) {
+        console.error('Error fetching resident:', error);
+      }
     };
 
     fetchData();

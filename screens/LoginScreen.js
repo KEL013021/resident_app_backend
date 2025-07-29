@@ -31,7 +31,7 @@ export default function LoginScreen({ navigation, setIsLoggedIn }) {
     }
 
     try {
-      const response = await fetch('http://192.168.1.9/RESIDENT/database/login.php', {
+      const response = await fetch('http://10.50.144.130/RESIDENT_COPY1/database/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ gmail: email, password: password }),
@@ -41,7 +41,7 @@ export default function LoginScreen({ navigation, setIsLoggedIn }) {
       console.log('Login response:', data);
 
       if (data.success) {
-        await AsyncStorage.setItem('userId', data.user_id.toString());
+        await AsyncStorage.setItem('user_id', data.user_id.toString());
         setIsLoggedIn(true);
       } else {
         setModalMessage(data.message || 'Login failed. Please try again.');

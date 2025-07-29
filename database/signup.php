@@ -25,7 +25,7 @@ if ($userResult->num_rows > 0) {
 }
 
 // Step 2: Insert into `user` table
-$insertUser = $conn->prepare("INSERT INTO user (gmail, password, toa, status) VALUES (?, ?, ?, 'active')");
+$insertUser = $conn->prepare("INSERT INTO user (gmail, password, toa, status) VALUES (?, ?, ?, 'resident')");
 $insertUser->bind_param("sss", $gmail, $password, $toa);
 
 if ($insertUser->execute()) {

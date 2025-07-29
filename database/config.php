@@ -6,7 +6,7 @@ error_reporting(0);           // suppress warnings
 $host = 'localhost';
 $username = 'root';
 $password = '';
-$database = 'brgygo';
+$database = 'brygo';
 
 $conn = new mysqli($host, $username, $password, $database);
 

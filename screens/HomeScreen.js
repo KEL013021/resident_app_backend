@@ -29,6 +29,7 @@ export default function HomeScreen({ navigation }) {
       paddingHorizontal: 15,
       borderBottomLeftRadius: 25,
       borderBottomRightRadius: 25,
+      elevation: 10,
     },
     headerRow: {
       flexDirection: 'row',
@@ -56,6 +57,7 @@ export default function HomeScreen({ navigation }) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      elevation: 10,
     },
     welcomeText: {
       color: '#fff',
@@ -73,6 +75,7 @@ export default function HomeScreen({ navigation }) {
       marginTop: 20,
       borderRadius: 10,
       padding: 15,
+      elevation: 10,
     },
     announcementHeader: {
       color: '#fff',
@@ -93,30 +96,76 @@ export default function HomeScreen({ navigation }) {
       fontSize: 12,
       textAlign: 'right', // ➡️ Right aligned
     },
+    leftHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  },
+
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10, // spacing between menu and logo
+  },
+
+  logoImage: {
+    width: 50,
+    height: 45,
+    resizeMode: 'contain',
+  },
+
+  logoText: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  gText: {
+  color: 'yellow',
+},
+
+bText: {
+  color: '#fff',
+},
   });
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerRow}>
-          <TouchableOpacity
-            style={styles.sidebarIcon}
-            onPress={() => navigation.openDrawer()}
-          >
-            <Ionicons name="menu" size={28} color="#fff" />
-          </TouchableOpacity>
+  <View style={styles.headerRow}>
+    {/* Menu + BRGYGO Branding (left side) */}
+    <View style={styles.leftHeader}>
+      <TouchableOpacity
+        style={styles.sidebarIcon}
+        onPress={() => navigation.openDrawer()}
+      >
+        <Ionicons name="menu" size={28} color="#fff" />
+      </TouchableOpacity>
 
-          <View style={styles.userInfo}>
-            <TouchableOpacity
-              style={styles.profileIcon}
-              onPress={() => navigation.navigate('Profile')}
-            >
-              <Ionicons name="person" size={20} color="rgba(102, 171, 241, 1)" />
-            </TouchableOpacity>
-          </View>
-        </View>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('./assets/logo1.png')} // replace with actual logo
+          style={styles.logoImage}
+        />
+        <Text style={styles.logoText}>
+          <Text style={styles.bText}>BRGY</Text>
+          <Text style={styles.gText}>GO</Text>
+        </Text>
       </View>
+    </View>
+
+    {/* Profile Icon (right side) */}
+    <View style={styles.userInfo}>
+      <TouchableOpacity
+        style={styles.profileIcon}
+        onPress={() => navigation.navigate('Profile')}
+      >
+        <Ionicons name="person" size={20} color="rgba(102, 171, 241, 1)" />
+      </TouchableOpacity>
+    </View>
+  </View>
+</View>
+
 
       {/* Welcome Box */}
       <View style={styles.welcomeBox}>
