@@ -5,10 +5,13 @@ $DB_USER = getenv('DB_USER');
 $DB_PASS = getenv('DB_PASS');
 $DB_NAME = getenv('DB_NAME');
 
-$conn = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT);
+$dsn = "mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_NAME;charset=utf8mb4";
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = new PDO($dsn, $DB_USER, $DB_PASS);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "✅ Connected to Aiven using Render environment variables!";
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
-echo "✅ Connected to Aiven using Render environment variables!";
 ?>
