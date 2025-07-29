@@ -1,23 +1,14 @@
 <?php
-header("Content-Type: application/json"); // move this to the top!
-ini_set('display_errors', 0); // disable display of warnings
-error_reporting(0);           // suppress warnings
+$DB_HOST = getenv('DB_HOST');
+$DB_PORT = getenv('DB_PORT');
+$DB_USER = getenv('DB_USER');
+$DB_PASS = getenv('DB_PASS');
+$DB_NAME = getenv('DB_NAME');
 
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'brygo';
+$conn = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT);
 
-$conn = new mysqli($host, $username, $password, $database);
-
-// Check the connection
 if ($conn->connect_error) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Database connection failed: ' . $conn->connect_error
-    ]);
-    exit;
+    die("Connection failed: " . $conn->connect_error);
 }
-
-$conn->set_charset("utf8");
+echo "✅ Connected to Aiven using Render environment variables!";
 ?>
