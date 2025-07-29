@@ -19,7 +19,7 @@ $result = $conn->query($sql);
 $announcements = [];
 
 while ($row = $result->fetch_assoc()) {
-    $row['image'] = $row['image'] ? "http://192.168.1.17/BRGY/BRGYGO/image/announcement/" . $row['image'] : null;
+    $row['image'] = $row['image'] ? "https://brgygo-admin.onrender.com/image/announcement/" . $row['image'] : null;
     $announcements[] = $row;
 }
 
