@@ -1,0 +1,6 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+# Send requests to PHP if the file doesn't exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
